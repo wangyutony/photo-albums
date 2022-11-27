@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from "react";
 import "./App.css";
 import "@aws-amplify/ui-react/styles.css";
-import { API } from "aws-amplify";
+import { API, Storage, AmplifyS3Image } from "aws-amplify";
+import Image from "./image";
 import {
   Button,
   Flex,
@@ -16,62 +17,84 @@ import {
   createAlbum as createAlbumMutation,
   deleteAlbum as deleteAlbumMutation,
 } from "./graphql/mutations";
+import { getSpaceUntilMaxLength } from "@testing-library/user-event/dist/utils";
 
 const App = ({ signOut }) => {
-  const [albums, setAlbums] = useState([]);
+  // state = { fileUrl: ''}
+  // componentDidMount() {
+  //   Storage.get('kdfjkd.jpg')
+  //   .then(data => {
+  //     this.setState()
+  //   })
+  // }
+  const [files, setFiles] = useState([]);
+  const [image, setImage] = useState(null);
+  //const [map, setMap] = useState(new Map());
+ // var listOfObjects = [];
+
+  const [map, setMap ] = useState(new Map());
+ // let map = new Map();
+
 
   useEffect(() => {
-    fetchAlbums();
-  }, []);
 
-  async function fetchAlbums() {
 
-  const albumQuery = `query MyQuery {
-      listAlbums {
-        items {
-          name
-          id
-          owner
-        }
-      }
-    }`;
-    const apiData = await API.graphql({ query: albumQuery });
+  Storage.configure({
+      customPrefix: {
+          public: 'pictures/',
+          protected: 'pictures/',
+          private: 'pictures/'
+      },
+  })
 
-    const albumsFromAPI = apiData.data.listAlbums.items;
 
-    setAlbums(albumsFromAPI);
+  Storage.list('').then(files => {
+    setFiles(files);    
+ 
+    console.log("sldkfjdsjfkjlk");
+   }).catch(err => {
+    console.log(err);
+   })
+  }, [image]);
+
+  const showImg = (file) => {
+    Storage.get(file).then(resp => {
+      console.log(resp);
+      setImage(resp);
+    }).catch(err => {console.log(err);})
   }
 
-  async function createAlbum(event) {
-    event.preventDefault();
-    const form = new FormData(event.target);
-    const data = {
-      name: form.get("name"),
-      owner: form.get("owner"),
-    };
-    API.graphql({
-      query: createAlbumMutation,
-      variables: { input: data },
-    });
-
-    event.target.reset();
-    await fetchAlbums();
+  function showText(text){
+    document.getElementById("text").innerHTML=text;
+  }
+  function hide(){
+    document.getElementById("text").innerHTML="";
   }
 
-  async function deleteAlbum({ id }) {
-    const newAlbums = albums.filter((album) => album.id !== id);
-    setAlbums(newAlbums);
-    await API.graphql({
-      query: deleteAlbumMutation,
-      variables: { input: { id } },
-    });
-  }
+  const Icon = ({fileName}) => { 
+    const [image, setImage] = useState(null);
+
+    Storage.get(fileName).then(resp => {
+         setImage(resp);
+      }).catch(err => {console.log(err);})
+
+    return (<div>
+          <Image rounded thumbnail src={image} zoom={true} alt="skfjkld" width="15%" 
+          onClick={() => showImg(fileName)}
+        //  onMouseOver={() => showText('Some Text')} 
+        //  onMouseOut={() => hide()}
+          />
+          <p>{fileName}</p>
+       </div>
+    );
+}
+
 
   return (
     <View className="App">
       <Heading level={1}>Photo Albums App</Heading>
-      <View as="form" margin="3rem 0" onSubmit={createAlbum}>
-        <Flex direction="row" justifyContent="center">
+      {/* <View as="form" margin="3rem 0" onSubmit={createAlbum}>
+      <Flex direction="row" justifyContent="center">
           <TextField
             name="name"
             placeholder="Album Name"
@@ -92,29 +115,36 @@ const App = ({ signOut }) => {
             Create Album
           </Button>
         </Flex>
-      </View>
+      </View> */}
       <Heading level={2}>Current Albums</Heading>
       <View margin="3rem 0">
-        {albums.map((album) => (
+        {files.map((file) => (
           <Flex
-            key={album.id || album.name}
+            key={file.key || file.key}
             direction="row"
             justifyContent="center"
             alignItems="center"
           >
-            <Text as="strong" fontWeight={700}>
-              {album.name}
-            </Text>
-            <Text as="span">{album.owner}</Text>
-            <Button variation="link" onClick={() => deleteAlbum(album)}>
-              Delete album
-            </Button>
+            {/* <Text as="strong" fontWeight={700}>
+              {key}
+            </Text> */}
+            {/* <div style={{ width: 400, margin: '0 auto' }}>
+              <AmplifyS3Image
+                imgKey={file.key}
+              />
+            </div> */}
+            <Icon fileName={file.key} ></Icon>
           </Flex>
         ))}
       </View>
-      <Button onClick={signOut}>Sign Out</Button>
-    </View>
+            <Flex justifyContent="center"
+            alignItems="center"><Image src={image} width="600"/></Flex>
+            <br></br>
+            <Flex justifyContent="center"
+            alignItems="center"><Button onClick={signOut}>Sign Out</Button></Flex>
+  </View>
   );
-};
+
+}
 
 export default withAuthenticator(App);

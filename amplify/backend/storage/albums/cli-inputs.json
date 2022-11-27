@@ -1,0 +1,12 @@
+{
+  "resourceName": "albums",
+  "policyUUID": "2fc24fba",
+  "bucketName": "tony-first-s3",
+  "storageAccess": "auth",
+  "guestAccess": [],
+  "authAccess": [
+    "READ"
+  ],
+  "triggerFunction": "NONE",
+  "groupAccess": {}
+}
