@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-//import "./App.css";
+import "./App.css";
 import "@aws-amplify/ui-react/styles.css";
 import { API, Storage, AmplifyS3Image } from "aws-amplify";
 import Image from "./image";
@@ -7,17 +7,9 @@ import {
   Button,
   Flex,
   Heading,
-  Text,
-  TextField,
   View, Table, TableHead, TableRow, TableCell,
   withAuthenticator,
 } from "@aws-amplify/ui-react";
-// import { listAlbums } from "./graphql/queries";
-// import {
-//   createAlbum as createAlbumMutation,
-//   deleteAlbum as deleteAlbumMutation,
-// } from "./graphql/mutations";
-// import { getSpaceUntilMaxLength } from "@testing-library/user-event/dist/utils";
 
 const App = ({ signOut }) => {
   const [files, setFiles] = useState([]);
@@ -62,7 +54,7 @@ const App = ({ signOut }) => {
       <Table highlightOnHover={false}>
         <TableHead>
           <TableRow>
-            <TableCell><Heading level={3}>My family</Heading></TableCell>
+            <TableCell><Heading level={3} color='red'>Love Album</Heading></TableCell>
             <TableCell align="right"><Button align='right' onClick={signOut}>Sign Out</Button></TableCell>
           </TableRow>
         </TableHead>
