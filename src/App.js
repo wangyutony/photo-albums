@@ -13,6 +13,7 @@ import {
 
 const App = ({ signOut }) => {
   const [files, setFiles] = useState([]);
+  const [path, setPath] = useState(['tony2022']);
 
   useEffect(() => {
     Storage.configure({
@@ -23,7 +24,7 @@ const App = ({ signOut }) => {
       },
     })
 
-    Storage.list('tony2022').then(files => {
+    Storage.list(path).then(files => {
       setFiles(files);    
  
     files.map((file) => (console.log(file)))
@@ -57,8 +58,12 @@ const App = ({ signOut }) => {
             <TableCell><Heading level={3} color='red'>Love Album</Heading></TableCell>
             <TableCell align="right"><Button align='right' onClick={signOut}>Sign Out</Button></TableCell>
           </TableRow>
-        </TableHead>
+          <TableRow align='left'>
+            <TableCell align='left'><Heading level={9} color='black'>{path}</Heading></TableCell>
+          </TableRow>
+           </TableHead>
       </Table>
+      
       <br></br>
       {/* <View margin="3rem 0"> */}
         <Flex
