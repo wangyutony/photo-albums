@@ -68,7 +68,7 @@ const App = ({ signOut }) => {
 
     return (
           <Image rounded='true' thumbnail='true' src={image} zoom={true} 
-            alt={fileName} title={fileName} width='12%' />
+            alt={fileName} title={fileName} width='8%' />
     );
     //}
 }
@@ -118,7 +118,7 @@ const folderChange = (folder) => {
             wrap="wrap"
           >      
           {files.map((file) => (
-            <Icon key={file.key} width='40' fileName={file.key} file={file} ></Icon>
+            <Icon key={file.key} fileName={file.key} file={file} ></Icon>
           ))}
 
         </Flex>
